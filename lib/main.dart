@@ -5,6 +5,7 @@ void main() {
   runApp(const StringCalculatorApp());
 }
 
+/// Root widget of the app
 class StringCalculatorApp extends StatelessWidget {
   const StringCalculatorApp({super.key});
 
@@ -18,6 +19,7 @@ class StringCalculatorApp extends StatelessWidget {
   }
 }
 
+/// UI screen for entering a numbers string and seeing the result
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
 
@@ -29,15 +31,19 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   final _controller = TextEditingController();
   final _calc = StringCalculator();
   String _result = "";
+  bool _hasError = false;
 
+  /// Attempts calculation and updates [_result] or error message
   void _calculate() {
     setState(() {
       try {
         final input = _controller.text.trim();
         final value = _calc.add(input);
         _result = "Result: $value";
+        _hasError = false;
       } catch (e) {
         _result = "Error: ${e.toString()}";
+        _hasError = true;
       }
     });
   }
@@ -45,39 +51,50 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
+      resizeToAvoidBottomInset: true, // Avoid overflow when keyboard appears
       appBar: AppBar(title: const Text("String Calculator Kata")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const Text(
-                  "Enter numbers string:",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                "Enter numbers string:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+
+              // Input field
+              TextField(
+                controller: _controller,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  hintText: 'e.g. 1,2,3 or //;\n1;2',
                 ),
-                const SizedBox(height: 10),
-                TextField(
-                  controller: _controller,
-                  decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    hintText: 'e.g. 1,2,3 or //;\n1;2',
-                  ),
-                  maxLines: 3,
-                ),
-                const SizedBox(height: 20),
-                ElevatedButton(
+                maxLines: 3,
+              ),
+              const SizedBox(height: 20),
+
+              // Calculate button
+              Center(
+                child: ElevatedButton(
                   onPressed: _calculate,
                   child: const Text("Calculate"),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  _result,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 20),
+
+              // Result / Error display
+              Text(
+                _result,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: _hasError ? Colors.red : Colors.green,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),

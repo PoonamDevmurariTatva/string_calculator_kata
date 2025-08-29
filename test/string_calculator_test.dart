@@ -8,6 +8,7 @@ void main() {
     calc = StringCalculator();
   });
 
+  // --- Base rules ---
   test('Empty string returns 0', () {
     expect(calc.add(""), 0);
   });
@@ -28,10 +29,12 @@ void main() {
     expect(calc.add("1\n2,3"), 6);
   });
 
+  // --- Custom delimiter ---
   test('Supports custom delimiter', () {
     expect(calc.add("//;\n1;2"), 3);
   });
 
+  // --- Negatives ---
   test('Negative numbers throw exception with all negatives listed', () {
     expect(
           () => calc.add("1,-2,-3,4"),
@@ -41,6 +44,7 @@ void main() {
     );
   });
 
+  // --- Advanced rules ---
   test('Ignores numbers greater than 1000', () {
     expect(calc.add("2,1001"), 2);
   });
